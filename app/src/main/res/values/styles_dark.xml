@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DarkCardView" parent="CardView">
+        <item name="android:backgroundTint"> #1D1D1D </item>
+    </style>
+
+    <style name="DarkImgButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:backgroundTint"> #BB86FC </item>
+    </style>
+
+    <style name="DarkButton" parent="TextAppearance.AppCompat.Button">
+        <item name="android:backgroundTint"> #BB86FC </item>
+    </style>
+
+    <style name="PrincipalTxt" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor"> #FFFFFF </item>
+    </style>
+
+    <style name="SecondaryTxt" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor"> #e1e1e1 </item>
+    </style>
+
+
+
+
+</resources>
