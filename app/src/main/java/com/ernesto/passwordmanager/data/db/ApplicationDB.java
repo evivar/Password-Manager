@@ -14,7 +14,7 @@ import com.ernesto.passwordmanager.domain.dao.PersonDAO;
 import com.ernesto.passwordmanager.domain.entity.Password;
 import com.ernesto.passwordmanager.domain.entity.Person;
 
-@Database(entities = {Person.class, Password.class}, version = 9)
+@Database(entities = {Person.class, Password.class}, version = 10)
 public abstract class ApplicationDB extends RoomDatabase {
 
     private static ApplicationDB instance;

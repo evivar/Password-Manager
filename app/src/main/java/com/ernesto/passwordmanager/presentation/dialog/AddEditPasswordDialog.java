@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -29,6 +31,8 @@ public class AddEditPasswordDialog extends AppCompatDialogFragment {
     private EditText editTextUser;
 
     private EditText editTextPassword;
+
+    private EditText editTextOther;
 
     private Button saveBtn;
 
@@ -77,6 +81,7 @@ public class AddEditPasswordDialog extends AppCompatDialogFragment {
 
         editTextUser = view.findViewById(R.id.userTxt_AddPasswordDialog);
         editTextPassword = view.findViewById(R.id.passwordTxt_AddPasswordDialog);
+        editTextOther = view.findViewById(R.id.appTxt_AddPasswordDialog);
 
         if (isEditing) {
             editTextUser.setText(password.getUser());
@@ -86,6 +91,34 @@ public class AddEditPasswordDialog extends AppCompatDialogFragment {
             spinnerApp.setVisibility(View.VISIBLE);
         }
 
+        spinnerApp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ApplicationItem selectedItem = applicationList.get(spinnerApp.getSelectedItemPosition());
+                String selectedValue = selectedItem.getApplicationName().trim().toLowerCase();
+                System.out.println(selectedValue);
+                switch (selectedValue){
+                    case "otro":editTextOther.setVisibility(View.VISIBLE); break;
+                    case "pin": editTextPassword.setInputType(InputType.TYPE_CLASS_NUMBER); break;
+                    default:
+                        editTextPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        editTextOther.setVisibility(View.GONE);
+                        break;
+                }
+                /*if(adapterView.getItemAtPosition(i).toString().equals("Otro")){
+                    editTextOther.setVisibility(View.VISIBLE);
+                }
+                else if(adapterView.getItemAtPosition(i).toString().equals("PIN")){
+                    editTextPassword.setInputType(InputType.TYPE_CLASS_NUMBER);
+                }*/
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         saveBtn = view.findViewById(R.id.AddBtn_AddPasswordDialog);
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,14 +127,19 @@ public class AddEditPasswordDialog extends AppCompatDialogFragment {
                 String pass = editTextPassword.getText().toString();
                 ApplicationItem appItem = applicationList.get(spinnerApp.getSelectedItemPosition());
                 String app = appItem.getApplicationName();
+                String appName = appItem.getApplicationName();
+                if(app.equals("Otro")){
+                    appName = editTextOther.getText().toString();
+                    appName = appName.replaceAll("www.", "");
+                    appName = appName.substring(0, 1).toUpperCase() + appName.substring(1);
+                }
                 if (user.trim().isEmpty() || pass.trim().isEmpty()) {
                     Toast.makeText(getActivity(), "Rellene el usuario y contraseña", Toast.LENGTH_SHORT).show();
                 } else {
                     if (isEditing) {
-                        //listener.editPassword(password.getApplication(), user, pass, password.getId());
                         listener.editPasswordV2(password, user, pass);
                     } else {
-                        listener.addPassword(app, user, pass);
+                        listener.addPassword(app, user, pass, appName);
                     }
                     dismiss();
                 }
@@ -163,6 +201,7 @@ public class AddEditPasswordDialog extends AppCompatDialogFragment {
         applicationList.add(new ApplicationItem(R.drawable.ic_visa, "VISA"));
         applicationList.add(new ApplicationItem(R.drawable.ic_wifi, "Wi-Fi"));
         applicationList.add(new ApplicationItem(R.drawable.ic_wordpress, "Wordpress"));
+        applicationList.add(new ApplicationItem(R.drawable.ic_otro, "Otro"));
     }
 
     @Override
@@ -177,9 +216,9 @@ public class AddEditPasswordDialog extends AppCompatDialogFragment {
     }
 
     public interface AddEditPasswordDialogListener {
-        void addPassword(String app, String user, String pass);
+        void addPassword(String app, String user, String pass, String appName);
 
-        void editPassword(String app, String user, String pass, int passwordId);
+        void editPassword(String app, String user, String pass, int passwordId, String appName);
 
         void editPasswordV2(Password oldPassword, String user, String pass);
     }

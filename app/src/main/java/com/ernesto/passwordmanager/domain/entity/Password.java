@@ -19,12 +19,15 @@ public class Password {
 
     private int appImg;
 
-    public Password(int person_id, String application, String user, String password, int appImg) {
+    private String imgName;
+
+    public Password(int person_id, String application, String user, String password, int appImg, String imgName) {
         this.person_id = person_id;
         this.application = application;
         this.user = user;
         this.password = password;
         this.appImg = appImg;
+        this.imgName = imgName;
     }
 
     public int getId() {
@@ -75,14 +78,24 @@ public class Password {
         this.appImg = appImg;
     }
 
+    public String getImgName() {
+        return imgName;
+    }
+
+    public void setImgName(String imgName) {
+        this.imgName = imgName;
+    }
+
     @Override
     public String toString() {
         return "Password{" +
-                "person_id=" + person_id +
-                ", id=" + id +
+                "id=" + id +
+                ", person_id=" + person_id +
                 ", application='" + application + '\'' +
                 ", user='" + user + '\'' +
                 ", password='" + password + '\'' +
+                ", appImg=" + appImg +
+                ", imgName='" + imgName + '\'' +
                 '}';
     }
 }

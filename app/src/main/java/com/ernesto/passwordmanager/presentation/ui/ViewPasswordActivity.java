@@ -3,8 +3,13 @@ package com.ernesto.passwordmanager.presentation.ui;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +28,7 @@ import com.ernesto.passwordmanager.domain.entity.Password;
 import com.ernesto.passwordmanager.domain.viewModel.PasswordViewModel;
 import com.ernesto.passwordmanager.presentation.adapter.PasswordAdapter;
 import com.ernesto.passwordmanager.presentation.dialog.AddEditPasswordDialog;
+import com.ernesto.passwordmanager.presentation.dialog.AddEditPasswordTabbedDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -79,6 +85,7 @@ public class ViewPasswordActivity extends AppCompatActivity implements AddEditPa
             @Override
             public void onClick(View view) {
                 openAddEditPasswordDialog(false, null);
+                //openAddEditPasswordDialogV2(false, null);
             }
         });
 
@@ -135,16 +142,21 @@ public class ViewPasswordActivity extends AppCompatActivity implements AddEditPa
         dialog.show(getSupportFragmentManager(), "add edit password dialog");
     }
 
+    public void openAddEditPasswordDialogV2(boolean edit, Password password){
+        AddEditPasswordTabbedDialog dialog = new AddEditPasswordTabbedDialog(edit, password);
+        dialog.show(getSupportFragmentManager(), "add edit password dialgo v2");
+    }
+
     @Override
-    public void addPassword(String app, String user, String pass) {
-        Password password = new Password(personId, app, user, pass, 1);
+    public void addPassword(String app, String user, String pass, String appName) {
+        Password password = new Password(personId, app, user, pass, 1, appName);
         System.out.println(password.toString());
         viewModel.createPassword(password);
     }
 
     @Override
-    public void editPassword(String app, String user, String pass, int passwordId) {
-        Password password = new Password(personId, app, user, pass, -1);
+    public void editPassword(String app, String user, String pass, int passwordId, String appName) {
+        Password password = new Password(personId, app, user, pass, -1, appName);
         viewModel.updatePassword(password);
     }
 
@@ -154,5 +166,30 @@ public class ViewPasswordActivity extends AppCompatActivity implements AddEditPa
         String oldUser = oldPassword.getUser();
         String app = oldPassword.getApplication();
         viewModel.updatePasswordByUserAndApp(user, pass, oldUser, app);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.searchBtn_menu);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapter.getFilter().filter(s);
+                return false;
+            }
+        });
+
+        return true;
     }
 }
